@@ -34,7 +34,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QPalette, QColor, QFont
 
 import pyqtgraph as pg
-import numpy as np
+# import numpy as np
 
 
 # ══════════════════════════════════════════════════════════════
@@ -104,9 +104,11 @@ def _parse_rd03e(buf: bytearray, t0: float) -> tuple[list[RadarFrame], bytearray
         status   = buf[2]
         raw_dist = buf[3] | (buf[4] << 8)
         dist_mm  = raw_dist * 10.0   # cm→mm
+        # Always emit a target — zero when no presence so the graph plots 0
+        # rather than leaving a gap in the line.
         tgt = Target(x_mm=0.0, y_mm=dist_mm)
         frames.append(RadarFrame(elapsed_s=time.monotonic()-t0,
-                                  targets=[tgt] if raw_dist>0 else [],
+                                  targets=[tgt],
                                   status=status))
         buf = buf[7:]
     return frames, buf
@@ -687,14 +689,17 @@ class MainWindow(QMainWindow):
         is_2d = RADAR_TYPES[self._radar_type]["is_2d"]
 
         # ── Distance plot ──
-        # For all radars: plot Y component of each target (signed, in metres)
-        # This handles negative Y naturally (e.g. LD2450 behind sensor)
+        # For all radars: plot Y component of each target (signed, in metres).
+        # For 1D radars (RD-03E, LD2410C) target 0 is always present (zero when
+        # no detection) so the line never has gaps — it drops to 0 on clear FOV.
+        # For LD2450 we only plot a target slot when a real target exists.
         for i in range(3):
             tb, db = self._dist_bufs[i]
             if i < len(f.targets):
-                tgt = f.targets[i]
-                # Y is depth — preserving sign so negative values show below zero
-                dist_val = tgt.y_m
+                dist_val = f.targets[i].y_m
+            elif not is_2d and i == 0:
+                # 1D radar with no targets list — still plot zero
+                dist_val = 0.0
             else:
                 dist_val = None
             if dist_val is not None:
@@ -794,7 +799,7 @@ class MainWindow(QMainWindow):
             return
         try:
             with open(path,newline="") as f:
-                rows = list(csv.DictReader(f))
+                rows = csv.DictReader(f)
         except OSError as e:
             QMessageBox.critical(self,"Error",str(e)); return
 

@@ -14,8 +14,6 @@ Range: 30cm - 600cm for moving targets   | From rd-03e.pdf section 1.1
 
 UART Baud Rate: 256000            
 
-MAX FPS: Baud Rate limited since this is an FMCW radar.
-
 
 
 
@@ -24,3 +22,6 @@ MAX FPS: Baud Rate limited since this is an FMCW radar.
 |                 MEASURED CHARACTERISTICS                  |
 |                                                           |
 ------------------------------------------------------------- 
+
+MAX FPS: 10 - 11 FPS (On 256000 Baud. May be higher at higher Baud)
+
