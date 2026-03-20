@@ -1,0 +1,22 @@
+-------------------------------------------------------------
+|                                                           |
+|        ASSUMED CHARACTERISTICS BASED ON DATASHEETS        |
+|                                                           |
+-------------------------------------------------------------
+
+Current Consumption: 44mA (average)      | From rd-03e.pdf section 2.4
+
+Operating Frequency: 24 - 24.25 GHZ      | From rd-03e.pdf section 2 
+
+FOV: ±45° elevation, ±20° azimuth        | From rd-03e.pdf section 1.1
+
+Range: 30cm - 600cm for moving targets   | From rd-03e.pdf section 1.1
+
+UART Baud Rate: 256000               
+
+
+-------------------------------------------------------------
+|                                                           |
+|                 MEASURED CHARACTERISTICS                  |
+|                                                           |
+------------------------------------------------------------- 
